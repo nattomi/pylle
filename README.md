@@ -10,4 +10,4 @@ Stop logging
 ```
 pylle stop
 ```
-Read the [introduction](docs/introduction.md) for more information!
+Read the [manual](docs/manual.md) for more information!

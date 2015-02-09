@@ -9,6 +9,19 @@ This is an introduction to the pylle (**Py**thon **L**ightweight **L**ogging **E
 
 ##### The data logging deamon
 
+The data logging daemon [pylle](../pylle) is the heart of the package. The principles of operation is as follows:
+
+1. Get a timestamp.
+2. Run for some seconds and then read out the content of the buffer of the A/D converter.
+3. Dump the timestamp and the content of the buffer into a text file.
+4. (optional) Trigger a separate process for doing additional processing on the buffer content (such as uploading it into a database table, see for example the R script [insert.R](../insert.R).
+5. Go to 1.
+
+The daemon can be started via
+```pylle start```
+and stopped via
+```pylle stop```. A sample [init.d](../pylle.initd) script is also included for being able to handle pylle as a standard Debian service.
+
 
 
 

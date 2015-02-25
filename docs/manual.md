@@ -44,4 +44,4 @@ The client application is a realtime visualization of the data broadcasted by th
 <script type="text/javascript" src="flot/jquery.flot.min.js"></script>
 <script type="text/javascript" src="flot/jquery.flot.time.min.js"></script>
 ```
-The easiest way to get the jquery and flot libraries under Debian is by installing the ```libjs-jquery``` and ```libjs-flot``` packages. Here is the [javascript](../client/plot.js) for the application. A production example can be found at the [homepage for atmospherical eletricity recordings](http://aero.nck.ggki.hu) in Nagycenk Observatory.
+The easiest way to get the jquery and flot libraries under Debian is by installing the ```libjs-jquery``` and ```libjs-flot``` packages. Here is the [javascript](../client/plot.js) for the application. A production example can be found at the [homepage for atmospheric eletricity recordings](http://aero.nck.ggki.hu) in Nagycenk Observatory.

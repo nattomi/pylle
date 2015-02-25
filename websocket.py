@@ -57,9 +57,9 @@ class BroadcastServerFactory(WebSocketServerFactory):
       self.stream()
 
    def stream(self):
-      cur.execute("""SELECT * FROM live ORDER BY nsec1970 + fracsec/10e5 DESC LIMIT 1""")
+      cur.execute("""SELECT * FROM live ORDER BY nsec1970 + fracsec/1e6 DESC LIMIT 1""")
       row = cur.fetchone()
-      self.streamvalue = '{"x":' + str(int(round((row[1] + row[2]/10e6)*1000))) + ',"y":' + str(row[0]) + '}'
+      self.streamvalue = '{"x":' + str(int(round((row[1] + row[2]/1e6)*1000))) + ',"y":' + str(row[0]) + '}'
       self.broadcast(self.streamvalue)
       reactor.callLater(5, self.stream)
 

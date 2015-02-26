@@ -8,11 +8,11 @@ if len(sys.argv) == 1:  # display help
     sys.exit(helpmsg)
 else:
     csodir = sys.argv[1]
-    if 3 <= len(sys.argv):
-        tol = sys.argv[2]
-    else:
-        tol = 100 # fallback to default value
+    tol = 100 # fallback to default value
+    if 2 < len(sys.argv):
+        tol = int(sys.argv[2])
 
+print tol
 i = 0
 gap = 0
 missing = 0

@@ -1,8 +1,54 @@
 #!/usr/bin/python
+# --------
+# settings
+# --------
+safetygap = 0.05 # time to wait (in seconds) before reading out buffer content during daq
+bufferLength = 10 # length of a buffer (in seconds)
+simMode = True # set this to True to enter simulation mode
+CFG = ['srate 65535' + '\r', # config lines for the logger
+       'slist 0 x0000' + '\r',
+       'asc' + '\r']
+wd = '/tmp/cso' # working directory 
+customScript = '' # you can specify a custom script here which can be run after each buffer readout to perform a specific task (such as uploading buffer content into a relational database) as a detached process. Use an empty string if there is no need to perform anything.
+
+# ---------
+# modules
+# ---------
 import time
 import serial
 import os
 from daemon import runner
+
+# ---------
+# Functions
+# ---------
+def readBuffer(s): # reads the current content of the buffer of a DATAQ data logger connected via serial port. s is a serial object created via serial.Serial
+    ans = ''
+    while s.inWaiting() > 0:
+        buffItem = ser.read(1)
+        if buffItem == '\r':
+            buffItem = '\n'
+            ans += buffItem
+    return ans
+        
+def dummyCSO(n): # used to generate dummy buffer content readouts in simulation mode
+    ans = 'start\n'
+    for i in range(0,n):
+        ans += 'sc 0\n'
+    ans += 'stop'
+    return ans
+
+def stopAndWriteCso(safetygap,filename,timestamp,simMode): # sends a stop command to DATAQ and reads out any leftovers
+    if not simMode:
+        ser.write('stop' + '\r') # stop daq
+    time.sleep(safetygap)
+    if not simMode:
+        out = readBuffer(ser) # reading out buffer content
+    else:
+        out = dummyCSO(100)
+    print "Writing buffer content to " + filename
+    with open(filename, "w") as f:
+        f.write(repr(timestamp) + '\n' + out)
 
 class App():
     def __init__(self):
@@ -13,56 +59,6 @@ class App():
         self.pidfile_timeout = 5
 
     def run(self):
-        # --------
-        # settings
-        # --------
-        safetygap = 0.05 # time to wait (in seconds) before reading out buffer content during daq
-        bufferLength = 10 # length of a buffer (in seconds)
-        simMode = True # set this to True to enter simulation mode
-        CFG = ['srate 65535' + '\r', # config lines for the logger
-               'slist 0 x0000' + '\r',
-               'asc' + '\r']
-        wd = '/tmp/cso' # working directory 
-        customScript = '' # you can specify a custom script here which can be run after each buffer readout to perform a specific task (such as uploading buffer content into a relational database) as a detached process. Use an empty string if there is no need to perform anything.
-        
-        # ---------
-        # Functions
-        # ---------
-        def readBuffer(s): # reads the current content of the buffer of a DATAQ data logger connected via serial port. s is a serial object created via serial.Serial
-            ans = ''
-            while s.inWaiting() > 0:
-                buffItem = ser.read(1)
-                if buffItem == '\r':
-                    buffItem = '\n'
-                ans += buffItem
-            return ans
-
-        def dummyCSO(n): # used to generate dummy buffer content readouts in simulation mode
-            ans = 'start\n'
-            for i in range(0,n):
-                ans += 'sc 0\n'
-            ans += 'stop'
-            return ans
-
-        def stopAndWriteCso(safetygap,filename,timestamp,simMode): # sends a stop command to DATAQ and reads out any leftovers
-            if not simMode:
-                ser.write('stop' + '\r') # stop daq
-            time.sleep(safetygap)
-            if not simMode:
-                out = readBuffer(ser) # reading out buffer content
-            else:
-                out = dummyCSO(100)
-            print "Writing buffer content to " + filename
-            with open(filename, "w") as f:
-                f.write(repr(timestamp) + '\n' + out)
-
-        def mkBasename(i): # creates basename from an integer by padding with leading zeros
-            buffNumber = str(i)                                                     
-            return '0' * (8-len(buffNumber)) + buffNumber + '.cso'
-
-        # ----
-        # main
-        # ----
         connected = False # at startup, the A/D converter is not connected
         withCustomScript = len(customScript) > 0
         if (withCustomScript):
@@ -108,7 +104,7 @@ class App():
             try:
                 while True:
                     # starting data aquisition to buffer
-                    basename = mkBasename(i)
+                    basename = "%08d.cso" % i
                     timestamp = time.time()
                     if not simMode:
                         ser.write('start' + '\r') # start daq

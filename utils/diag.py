@@ -12,7 +12,6 @@ else:
     if 2 < len(sys.argv):
         tol = int(sys.argv[2])
 
-print tol
 i = 0
 gap = 0
 missing = 0

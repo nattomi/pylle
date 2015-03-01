@@ -16,7 +16,7 @@ if len(sys.argv) == 1:  # display help
 else:
     csodir = sys.argv[1]
     csodir_base = os.path.basename(csodir)
-    groupsize = 4 # fallback to default value
+    groupsize = 8582 # fallback to default value
     if 2 < len(sys.argv):
         groupsize = int(sys.argv[2])
 

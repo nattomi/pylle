@@ -1,5 +1,7 @@
 /*********************************************************************/
 /* g++ -std=c++11 -o trange trange.cpp                               */
+/* or prior to g++ 4.7                                               */
+/* g++ -std=c++0x -o trange trange.cpp                               */
 /*********************************************************************/
 
 #include <iostream>
@@ -56,8 +58,12 @@ int main(int argc, char *argv[]) {
       if (ent->d_name[0] != '.') {
 	csofile_string = bindir_string + "/" + ent->d_name;
 	tr = get_trange(&csofile_string[0]);
-	std::cout << std::fixed << "start time: " << tr.start
-		  << " stop time: " << tr.stop << std::endl;
+	std::cout << std::fixed 
+		  << "insert into meta_potgrad" << std::endl 
+		  << "values (" 
+		  << tr.start << "," 
+		  << tr.stop << ",'"
+		  << ent->d_name << "');" << std::endl;
       }
     }
     closedir(dir);

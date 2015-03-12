@@ -4,7 +4,7 @@ CC = g++
 # compiler flags:
 #  -g    adds debugging information to the executable file
 #  -Wall turns on most, but not all, compiler warnings
-CFLAGS  = -g -Wall -std=c++11 -lpqxx -lpq -lnetcdf_c++
+CFLAGS  = -g -Wall -std=c++11 -lpqxx -lpq -lnetcdf_c++ -lboost_filesystem -lboost_system -lcgicc
 
 # the build target executable:
 TARGET = get_potgrad
